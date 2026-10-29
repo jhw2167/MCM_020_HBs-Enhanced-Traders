@@ -1,4 +1,4 @@
-package com.holybuckets.template.networking;
+package com.holybuckets.enhancedtrader.networking;
 
 import com.holybuckets.foundation.HBUtil;
 import net.minecraft.core.BlockPos;

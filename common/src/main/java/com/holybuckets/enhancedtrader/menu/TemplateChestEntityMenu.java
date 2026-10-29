@@ -1,4 +1,4 @@
-package com.holybuckets.template.menu;
+package com.holybuckets.enhancedtrader.menu;
 
 import com.holybuckets.foundation.HBUtil;
 import net.minecraft.core.BlockPos;

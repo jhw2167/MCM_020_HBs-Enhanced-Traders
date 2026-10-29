@@ -1,7 +1,7 @@
-package com.holybuckets.template.platform;
+package com.holybuckets.enhancedtrader.platform;
 
-import com.holybuckets.template.Constants;
-import com.holybuckets.template.platform.services.IPlatformHelper;
+import com.holybuckets.enhancedtrader.Constants;
+import com.holybuckets.enhancedtrader.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
 

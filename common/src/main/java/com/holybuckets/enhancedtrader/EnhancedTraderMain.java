@@ -1,27 +1,23 @@
-package com.holybuckets.template;
+package com.holybuckets.enhancedtrader;
 
-
+import com.holybuckets.enhancedtrader.config.EnhancedTraderConfig;
+import com.holybuckets.enhancedtrader.config.ModConfig;
+import com.holybuckets.enhancedtrader.core.TradeManager;
 import com.holybuckets.foundation.event.EventRegistrar;
-import com.holybuckets.template.config.TemplateConfig;
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.EventPriority;
 import net.blay09.mods.balm.api.event.server.ServerStartingEvent;
 
-/**
- * Main instance of the mod, initialize this class statically via commonClass
- * This class will init all major Manager instances and events for the mod
- */
-public class TemplateMain {
-    private static boolean DEV_MODE = false;;
-    private static TemplateConfig CONFIG;
-    public static TemplateMain INSTANCE;
+public class EnhancedTraderMain {
+    private static boolean DEV_MODE = false;
 
-    public TemplateMain()
+    public static ModConfig MOD_CONFIG;
+    public static EnhancedTraderMain INSTANCE;
+
+    public EnhancedTraderMain()
     {
         super();
         INSTANCE = this;
         init();
-        // LoggerProject.logInit( "001000", this.getClass().getName() ); // Uncomment if you have a logging system in place
     }
 
     private void init()
@@ -46,9 +42,11 @@ public class TemplateMain {
     }
 
     private void onServerStarting(ServerStartingEvent e) {
-        CONFIG = Balm.getConfig().getActiveConfig(TemplateConfig.class);
         //this.DEV_MODE = CONFIG.devMode;
-        this.DEV_MODE = false;
+        EnhancedTraderConfig config = Balm.getConfig().getActiveConfig(EnhancedTraderConfig.class);
+        MOD_CONFIG = ModConfig.getInstance();
+        ModConfig.configureOnServerStart(config);
+        TradeManager.configureOnServerStart(config);
     }
 
 

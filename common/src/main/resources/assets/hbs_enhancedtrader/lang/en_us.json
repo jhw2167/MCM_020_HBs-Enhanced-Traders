@@ -1,0 +1,11 @@
+{
+  "entity.hbs_enhancedtrader.enhanced_trader": "Wandering Trader",
+  "menu.hbs_enhancedtrader.trader": "Wandering Trader",
+  "screen.hbs_enhancedtrader.buying": "Buying",
+  "screen.hbs_enhancedtrader.selling": "Selling",
+  "screen.hbs_enhancedtrader.switch_to_selling": "Reverse trades: sell to the trader",
+  "screen.hbs_enhancedtrader.switch_to_buying": "Reverse trades: buy from the trader",
+  "screen.hbs_enhancedtrader.uses": "Trades left: %s / %s",
+  "screen.hbs_enhancedtrader.unlimited": "Unlimited trades",
+  "screen.hbs_enhancedtrader.sold_out": "Sold out"
+}

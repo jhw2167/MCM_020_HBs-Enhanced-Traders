@@ -1,8 +1,8 @@
-package com.holybuckets.template.item;
+package com.holybuckets.enhancedtrader.item;
 
 
-import com.holybuckets.template.Constants;
-import com.holybuckets.template.block.ModBlocks;
+import com.holybuckets.enhancedtrader.Constants;
+import com.holybuckets.enhancedtrader.block.ModBlocks;
 import net.blay09.mods.balm.api.DeferredObject;
 import net.blay09.mods.balm.api.item.BalmItems;
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +16,7 @@ public class ModItems {
 
     public static void initialize(BalmItems items) {
         //items.registerItem(() -> emptyBlockItem = new EmptyBlockItem(items.itemProperties()), id("empty_block"));
-        creativeModeTab = items.registerCreativeModeTab(id(Constants.MOD_ID), () -> new ItemStack(ModBlocks.templateBlock));
+        creativeModeTab = items.registerCreativeModeTab(id(Constants.MOD_ID), () -> new ItemStack(ModBlocks.enhancedtraderBlock));
     }
 
     private static ResourceLocation id(String name) {

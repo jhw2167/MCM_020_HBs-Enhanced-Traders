@@ -1,4 +1,4 @@
-package com.holybuckets.template.platform.services;
+package com.holybuckets.enhancedtrader.platform.services;
 
 public interface IPlatformHelper {
 

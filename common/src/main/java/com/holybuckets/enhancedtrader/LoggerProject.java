@@ -1,4 +1,4 @@
-package com.holybuckets.template;
+package com.holybuckets.enhancedtrader;
 
 import com.holybuckets.foundation.LoggerBase;
 import com.mojang.logging.LogUtils;

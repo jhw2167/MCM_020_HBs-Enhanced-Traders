@@ -1,11 +1,11 @@
-package com.holybuckets.template;
+package com.holybuckets.enhancedtrader;
 
-import com.holybuckets.template.client.CommonClassClient;
+import com.holybuckets.enhancedtrader.client.CommonClassClient;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.fabricmc.api.ClientModInitializer;
 
 
-public class TemplateMainClient implements ClientModInitializer {
+public class EnhancedWanderingTradersMainFabricClient implements ClientModInitializer {
     
     @Override
     public void onInitializeClient() {

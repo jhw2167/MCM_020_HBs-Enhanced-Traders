@@ -16,10 +16,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.holybuckets.template.TemplateMain"
+            "com.holybuckets.enhancedtrader.EnhancedWanderingTradersMainFabric"
         ],
         "client": [
-            "com.holybuckets.template.TemplateMainClient"
+            "com.holybuckets.enhancedtrader.EnhancedWanderingTradersMainFabricClient"
         ]
     },
     "mixins": [

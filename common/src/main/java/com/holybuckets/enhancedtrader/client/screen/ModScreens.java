@@ -1,6 +1,6 @@
-package com.holybuckets.template.client.screen;
+package com.holybuckets.enhancedtrader.client.screen;
 
-import com.holybuckets.template.menu.ModMenus;
+import com.holybuckets.enhancedtrader.menu.ModMenus;
 import net.blay09.mods.balm.api.client.screen.BalmScreens;
 
 public class ModScreens {

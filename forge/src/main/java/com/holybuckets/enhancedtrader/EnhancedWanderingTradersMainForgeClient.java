@@ -1,13 +1,13 @@
-package com.holybuckets.template;
+package com.holybuckets.enhancedtrader;
 
-import com.holybuckets.template.client.CommonClassClient;
-import com.holybuckets.template.client.IBewlrRenderer;
+import com.holybuckets.enhancedtrader.client.CommonClassClient;
+import com.holybuckets.enhancedtrader.client.IBewlrRenderer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class TemplateMainClient {
+public class EnhancedWanderingTradersMainForgeClient {
 
 
     public static void clientInitializeForge() {

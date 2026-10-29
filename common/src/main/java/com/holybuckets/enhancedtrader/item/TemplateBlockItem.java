@@ -1,12 +1,12 @@
-package com.holybuckets.template.item;
+package com.holybuckets.enhancedtrader.item;
 
-import com.holybuckets.template.block.ModBlocks;
+import com.holybuckets.enhancedtrader.block.ModBlocks;
 import net.minecraft.world.item.BlockItem;
 
 public class TemplateBlockItem extends BlockItem {
 
     public TemplateBlockItem(Properties properties) {
-        super(ModBlocks.templateBlock, properties);
+        super(ModBlocks.enhancedtraderBlock, properties);
     }
 
 

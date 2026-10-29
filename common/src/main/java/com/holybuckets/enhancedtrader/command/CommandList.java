@@ -1,10 +1,10 @@
-package com.holybuckets.template.command;
+package com.holybuckets.enhancedtrader.command;
 
 //Project imports
 
 import com.holybuckets.foundation.HBUtil;
 import com.holybuckets.foundation.event.CommandRegistry;
-import com.holybuckets.template.LoggerProject;
+import com.holybuckets.enhancedtrader.LoggerProject;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

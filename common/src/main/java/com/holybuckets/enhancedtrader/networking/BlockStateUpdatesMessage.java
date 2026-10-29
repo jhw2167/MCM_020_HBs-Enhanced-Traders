@@ -1,4 +1,4 @@
-package com.holybuckets.template.networking;
+package com.holybuckets.enhancedtrader.networking;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;

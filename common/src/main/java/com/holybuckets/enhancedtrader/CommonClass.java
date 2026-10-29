@@ -1,11 +1,12 @@
-package com.holybuckets.template;
+package com.holybuckets.enhancedtrader;
 
+import com.holybuckets.enhancedtrader.config.EnhancedTraderConfig;
 import com.holybuckets.foundation.event.BalmEventRegister;
-import com.holybuckets.template.block.ModBlocks;
-import com.holybuckets.template.block.be.ModBlockEntities;
-import com.holybuckets.template.item.ModItems;
-import com.holybuckets.template.menu.ModMenus;
-import com.holybuckets.template.platform.Services;
+import com.holybuckets.enhancedtrader.block.ModBlocks;
+import com.holybuckets.enhancedtrader.block.be.ModBlockEntities;
+import com.holybuckets.enhancedtrader.item.ModItems;
+import com.holybuckets.enhancedtrader.menu.ModMenus;
+import com.holybuckets.enhancedtrader.platform.Services;
 import net.blay09.mods.balm.api.Balm;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Items;
@@ -19,7 +20,7 @@ public class CommonClass {
         if (isInitialized)
             return;
 
-        Constants.LOG.info("Hello from Common init on {}! we are currently in a {} environment!", com.holybuckets.template.platform.Services.PLATFORM.getPlatformName(), com.holybuckets.template.platform.Services.PLATFORM.getEnvironmentName());
+        Constants.LOG.info("Hello from Common init on {}! we are currently in a {} environment!", com.holybuckets.enhancedtrader.platform.Services.PLATFORM.getPlatformName(), com.holybuckets.enhancedtrader.platform.Services.PLATFORM.getEnvironmentName());
         Constants.LOG.info("The ID for diamonds is {}", BuiltInRegistries.ITEM.getKey(Items.DIAMOND));
 
         //Initialize Foundations
@@ -31,11 +32,10 @@ public class CommonClass {
 
         //RegisterConfigs
         //Balm.getConfig().registerConfig(ChallengeTempleConfig.class);
-        TemplateMain.INSTANCE = new TemplateMain();
+        EnhancedTraderMain.INSTANCE = new EnhancedTraderMain();
+        Balm.getConfig().registerConfig(EnhancedTraderConfig.class);
         BalmEventRegister.registerEvents();
         BalmEventRegister.registerCommands();
-        ModBlocks.initialize(Balm.getBlocks());
-        ModBlockEntities.initialize(Balm.getBlockEntities());
         ModItems.initialize(Balm.getItems());
         ModMenus.initialize(Balm.getMenus());
         

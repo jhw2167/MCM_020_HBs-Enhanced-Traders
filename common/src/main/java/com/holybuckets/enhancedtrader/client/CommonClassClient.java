@@ -1,7 +1,7 @@
-package com.holybuckets.template.client;
+package com.holybuckets.enhancedtrader.client;
 
-import com.holybuckets.template.client.screen.ModScreens;
-import com.holybuckets.template.item.ModItems;
+import com.holybuckets.enhancedtrader.client.screen.ModScreens;
+import com.holybuckets.enhancedtrader.item.ModItems;
 import com.holybuckets.foundation.client.ClientBalmEventRegister;
 import com.holybuckets.foundation.client.ClientEventRegistrar;
 import net.blay09.mods.balm.api.client.BalmClient;
@@ -12,7 +12,6 @@ public class CommonClassClient {
     public static void initClient() {
         ClientEventRegistrar registrar = ClientEventRegistrar.getInstance();
         ClientBalmEventRegister.registerEvents();
-        ModRenderers.clientInitialize(BalmClient.getRenderers());
         ModScreens.clientInitialize(BalmClient.getScreens());
         //ModItems.clientInitialize();
     }

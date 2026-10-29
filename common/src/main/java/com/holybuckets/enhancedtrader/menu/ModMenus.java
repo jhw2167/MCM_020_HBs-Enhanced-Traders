@@ -1,7 +1,6 @@
-package com.holybuckets.template.menu;
+package com.holybuckets.enhancedtrader.menu;
 
-import com.holybuckets.template.Constants;
-import com.holybuckets.template.block.be.TemplateBlockEntity;
+import com.holybuckets.enhancedtrader.Constants;
 import net.blay09.mods.balm.api.DeferredObject;
 import net.blay09.mods.balm.api.menu.BalmMenus;
 import net.minecraft.core.BlockPos;
@@ -12,23 +11,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ModMenus {
 
-    public static DeferredObject<MenuType<TemplateChestEntityMenu>> countingChestMenu;
+    public static void initialize(BalmMenus menus) {
 
-
-    public static void initialize(BalmMenus menus)
-    {
-        countingChestMenu = menus.registerMenu(id("counting_chest_menu"),
-            (syncId, inventory, buf) -> {
-                BlockPos pos = buf.readBlockPos();
-                Level level = inventory.player.level();
-                BlockEntity be = inventory.player.level().getBlockEntity(pos);
-                if( be instanceof TemplateBlockEntity) {
-                    TemplateBlockEntity cbe = (TemplateBlockEntity) be;
-                    cbe.setLevel(level);
-                    return new TemplateChestEntityMenu(syncId, inventory, cbe);
-                }
-                return null;
-            });
     }
 
     private static ResourceLocation id(String name) {
