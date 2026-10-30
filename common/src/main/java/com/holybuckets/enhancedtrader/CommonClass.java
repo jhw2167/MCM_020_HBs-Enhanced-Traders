@@ -2,10 +2,8 @@ package com.holybuckets.enhancedtrader;
 
 import com.holybuckets.enhancedtrader.config.EnhancedTraderConfig;
 import com.holybuckets.foundation.event.BalmEventRegister;
-import com.holybuckets.enhancedtrader.block.ModBlocks;
-import com.holybuckets.enhancedtrader.block.be.ModBlockEntities;
-import com.holybuckets.enhancedtrader.item.ModItems;
 import com.holybuckets.enhancedtrader.menu.ModMenus;
+import com.holybuckets.enhancedtrader.networking.TraderNetworking;
 import com.holybuckets.enhancedtrader.platform.Services;
 import net.blay09.mods.balm.api.Balm;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,8 +34,8 @@ public class CommonClass {
         Balm.getConfig().registerConfig(EnhancedTraderConfig.class);
         BalmEventRegister.registerEvents();
         BalmEventRegister.registerCommands();
-        ModItems.initialize(Balm.getItems());
         ModMenus.initialize(Balm.getMenus());
+        TraderNetworking.initialize(Balm.getNetworking());
         
         isInitialized = true;
     }

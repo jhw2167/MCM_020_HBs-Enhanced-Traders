@@ -1,15 +1,10 @@
 {
-  "markup": 1.5,
-  "defaultMaxUses": 12,
-  "favorableWeightMultiplier": 2.0,
-  "unfavorableWeightMultiplier": 0.25,
-  "minCategoriesPerTrader": 1,
-  "maxCategoriesPerTrader": 3,
   "tradeCategories": [
     {
       "id": "Novice Gatherer",
       "icon": "minecraft:sweet_berries",
       "weight": 10,
+      "markup": 1.5,
       "trades": [
         "minecraft:apple,0.5",
         "bread,1",
@@ -21,16 +16,103 @@
         "minecraft:oxeye_daisy,0.125",
         "minecraft:rabbit,0.5",
         "minecraft:chicken,0.5",
-        "hbs_boomseeds:boom_seeds,0.125"
+        "hbs_boomseed:boom_seeds,0.125"
       ],
-      "favorableBiomes": [ "minecraft:forest", "minecraft:flower_forest", "minecraft:birch_forest", "minecraft:meadow" ],
-      "unfavorableBiomes": [ "#minecraft:is_ocean", "minecraft:desert" ],
-      "mutuallyExclusiveCategories": [ "Novice Hunter" ]
+      "favorableBiomes": [
+        "minecraft:forest",
+        "minecraft:flower_forest",
+        "minecraft:birch_forest",
+        "minecraft:meadow"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean",
+        "minecraft:desert"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Gatherer - Pricey",
+        "Novice Gatherer - Fair",
+        "Novice Hunter",
+        "Novice Hunter - Pricey",
+        "Novice Hunter - Fair"
+      ]
+    },
+    {
+      "id": "Novice Gatherer - Pricey",
+      "icon": "minecraft:sweet_berries",
+      "weight": 10,
+      "markup": 2.0,
+      "trades": [
+        "minecraft:apple,0.5",
+        "bread,1",
+        "minecraft:sweet_berries,0.125",
+        "minecraft:glow_berries,0.25",
+        "minecraft:dandelion,0.125",
+        "minecraft:poppy,0.125",
+        "minecraft:cornflower,0.125",
+        "minecraft:oxeye_daisy,0.125",
+        "minecraft:rabbit,0.5",
+        "minecraft:chicken,0.5",
+        "hbs_boomseed:boom_seeds,0.125"
+      ],
+      "favorableBiomes": [
+        "minecraft:forest",
+        "minecraft:flower_forest",
+        "minecraft:birch_forest",
+        "minecraft:meadow"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean",
+        "minecraft:desert"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Gatherer",
+        "Novice Gatherer - Fair",
+        "Novice Hunter",
+        "Novice Hunter - Pricey",
+        "Novice Hunter - Fair"
+      ]
+    },
+    {
+      "id": "Novice Gatherer - Fair",
+      "icon": "minecraft:sweet_berries",
+      "weight": 10,
+      "markup": 1.0,
+      "trades": [
+        "minecraft:apple,0.5",
+        "bread,1",
+        "minecraft:sweet_berries,0.125",
+        "minecraft:glow_berries,0.25",
+        "minecraft:dandelion,0.125",
+        "minecraft:poppy,0.125",
+        "minecraft:cornflower,0.125",
+        "minecraft:oxeye_daisy,0.125",
+        "minecraft:rabbit,0.5",
+        "minecraft:chicken,0.5",
+        "hbs_boomseed:boom_seeds,0.125"
+      ],
+      "favorableBiomes": [
+        "minecraft:forest",
+        "minecraft:flower_forest",
+        "minecraft:birch_forest",
+        "minecraft:meadow"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean",
+        "minecraft:desert"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Gatherer",
+        "Novice Gatherer - Pricey",
+        "Novice Hunter",
+        "Novice Hunter - Pricey",
+        "Novice Hunter - Fair"
+      ]
     },
     {
       "id": "Novice Hunter",
       "icon": "minecraft:leather",
       "weight": 10,
+      "markup": 1.5,
       "trades": [
         "stone_sword,2",
         "minecraft:bow,3",
@@ -42,9 +124,88 @@
         "minecraft:beef,0.5",
         "minecraft:mutton,0.5"
       ],
-      "favorableBiomes": [ "minecraft:forest", "#minecraft:is_taiga", "minecraft:plains" ],
-      "unfavorableBiomes": [ "#minecraft:is_ocean" ],
-      "mutuallyExclusiveCategories": [ "Novice Gatherer", "Expert Hunter" ]
+      "favorableBiomes": [
+        "minecraft:forest",
+        "#minecraft:is_taiga",
+        "minecraft:plains"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Hunter - Pricey",
+        "Novice Hunter - Fair",
+        "Novice Gatherer",
+        "Novice Gatherer - Pricey",
+        "Novice Gatherer - Fair",
+        "Expert Hunter"
+      ]
+    },
+    {
+      "id": "Novice Hunter - Pricey",
+      "icon": "minecraft:leather",
+      "weight": 10,
+      "markup": 2.0,
+      "trades": [
+        "stone_sword,2",
+        "minecraft:bow,3",
+        "minecraft:arrow,0.125",
+        "minecraft:leather,0.5",
+        "minecraft:rabbit_hide,0.25",
+        "minecraft:feather,0.125",
+        "minecraft:porkchop,0.5",
+        "minecraft:beef,0.5",
+        "minecraft:mutton,0.5"
+      ],
+      "favorableBiomes": [
+        "minecraft:forest",
+        "#minecraft:is_taiga",
+        "minecraft:plains"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Hunter",
+        "Novice Hunter - Fair",
+        "Novice Gatherer",
+        "Novice Gatherer - Pricey",
+        "Novice Gatherer - Fair",
+        "Expert Hunter"
+      ]
+    },
+    {
+      "id": "Novice Hunter - Fair",
+      "icon": "minecraft:leather",
+      "weight": 10,
+      "markup": 1.0,
+      "trades": [
+        "stone_sword,2",
+        "minecraft:bow,3",
+        "minecraft:arrow,0.125",
+        "minecraft:leather,0.5",
+        "minecraft:rabbit_hide,0.25",
+        "minecraft:feather,0.125",
+        "minecraft:porkchop,0.5",
+        "minecraft:beef,0.5",
+        "minecraft:mutton,0.5"
+      ],
+      "favorableBiomes": [
+        "minecraft:forest",
+        "#minecraft:is_taiga",
+        "minecraft:plains"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Hunter",
+        "Novice Hunter - Pricey",
+        "Novice Gatherer",
+        "Novice Gatherer - Pricey",
+        "Novice Gatherer - Fair",
+        "Expert Hunter"
+      ]
     },
     {
       "id": "Expert Hunter",
@@ -64,14 +225,24 @@
         "minecraft:ender_pearl,4",
         "minecraft:blaze_rod,6"
       ],
-      "favorableBiomes": [ "minecraft:dark_forest", "#minecraft:is_taiga" ],
-      "unfavorableBiomes": [ "#minecraft:is_ocean" ],
-      "mutuallyExclusiveCategories": [ "Novice Hunter" ]
+      "favorableBiomes": [
+        "minecraft:dark_forest",
+        "#minecraft:is_taiga"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Hunter",
+        "Novice Hunter - Pricey",
+        "Novice Hunter - Fair"
+      ]
     },
     {
       "id": "Novice Contraptionist",
       "icon": "minecraft:redstone",
       "weight": 6,
+      "markup": 1.5,
       "trades": [
         "minecraft:redstone,0.25",
         "minecraft:lever,0.5",
@@ -85,14 +256,20 @@
         "minecraft:rail,0.25",
         "minecraft:powered_rail,2"
       ],
-      "favorableBiomes": [ "minecraft:plains", "minecraft:savanna" ],
-      "unfavorableBiomes": [ "minecraft:mushroom_fields" ],
+      "favorableBiomes": [
+        "minecraft:plains",
+        "minecraft:savanna"
+      ],
+      "unfavorableBiomes": [
+        "minecraft:mushroom_fields"
+      ],
       "mutuallyExclusiveCategories": []
     },
     {
       "id": "Novice Alchemist",
       "icon": "minecraft:brewing_stand",
       "weight": 6,
+      "markup": 1.5,
       "trades": [
         "minecraft:glass_bottle,0.25",
         "minecraft:sugar,0.125",
@@ -105,14 +282,23 @@
         "minecraft:blaze_powder,3",
         "minecraft:rabbit_foot,4"
       ],
-      "favorableBiomes": [ "minecraft:swamp", "minecraft:mangrove_swamp", "minecraft:mushroom_fields" ],
-      "unfavorableBiomes": [ "#minecraft:is_ocean" ],
-      "mutuallyExclusiveCategories": [ "Occultist" ]
+      "favorableBiomes": [
+        "minecraft:swamp",
+        "minecraft:mangrove_swamp",
+        "minecraft:mushroom_fields"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Occultist"
+      ]
     },
     {
       "id": "Miner",
       "icon": "minecraft:iron_pickaxe",
       "weight": 8,
+      "markup": 1.5,
       "trades": [
         "minecraft:torch,0.125",
         "minecraft:coal,0.5",
@@ -124,14 +310,23 @@
         "minecraft:iron_pickaxe,6",
         "minecraft:diamond,16"
       ],
-      "favorableBiomes": [ "#minecraft:is_mountain", "#minecraft:is_badlands", "minecraft:dripstone_caves", "minecraft:lush_caves" ],
-      "unfavorableBiomes": [ "#minecraft:is_ocean", "minecraft:swamp" ],
+      "favorableBiomes": [
+        "#minecraft:is_mountain",
+        "#minecraft:is_badlands",
+        "minecraft:dripstone_caves",
+        "minecraft:lush_caves"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean",
+        "minecraft:swamp"
+      ],
       "mutuallyExclusiveCategories": []
     },
     {
       "id": "Mountaineer",
       "icon": "minecraft:spyglass",
       "weight": 6,
+      "markup": 1.5,
       "trades": [
         "minecraft:ladder,0.25",
         "minecraft:scaffolding,0.25",
@@ -142,8 +337,16 @@
         "minecraft:calcite,0.125",
         "minecraft:stone,0.03125"
       ],
-      "favorableBiomes": [ "#minecraft:is_mountain", "minecraft:meadow", "minecraft:grove", "minecraft:snowy_slopes" ],
-      "unfavorableBiomes": [ "#minecraft:is_ocean", "minecraft:desert" ],
+      "favorableBiomes": [
+        "#minecraft:is_mountain",
+        "minecraft:meadow",
+        "minecraft:grove",
+        "minecraft:snowy_slopes"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean",
+        "minecraft:desert"
+      ],
       "mutuallyExclusiveCategories": []
     },
     {
@@ -164,14 +367,26 @@
         "minecraft:echo_shard,12",
         "minecraft:wither_skeleton_skull,32"
       ],
-      "favorableBiomes": [ "minecraft:dark_forest", "minecraft:deep_dark", "minecraft:soul_sand_valley", "minecraft:swamp" ],
-      "unfavorableBiomes": [ "minecraft:plains", "minecraft:flower_forest", "minecraft:cherry_grove" ],
-      "mutuallyExclusiveCategories": [ "Novice Alchemist" ]
+      "favorableBiomes": [
+        "minecraft:dark_forest",
+        "minecraft:deep_dark",
+        "minecraft:soul_sand_valley",
+        "minecraft:swamp"
+      ],
+      "unfavorableBiomes": [
+        "minecraft:plains",
+        "minecraft:flower_forest",
+        "minecraft:cherry_grove"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Novice Alchemist"
+      ]
     },
     {
       "id": "Islander",
       "icon": "minecraft:tropical_fish",
       "weight": 5,
+      "markup": 1.5,
       "trades": [
         "minecraft:cod,0.25",
         "minecraft:salmon,0.25",
@@ -185,15 +400,29 @@
         "minecraft:scute,3",
         "minecraft:nautilus_shell,8"
       ],
-      "favorableBiomes": [ "#minecraft:is_beach", "#minecraft:is_ocean", "#minecraft:is_jungle" ],
-      "unfavorableBiomes": [ "minecraft:desert", "#minecraft:is_mountain" ],
-      "forceSpawnBiomes": [ "minecraft:beach", "minecraft:mushroom_fields" ],
-      "mutuallyExclusiveCategories": [ "Arctic", "Desert Nomad" ]
+      "favorableBiomes": [
+        "#minecraft:is_beach",
+        "#minecraft:is_ocean",
+        "#minecraft:is_jungle"
+      ],
+      "unfavorableBiomes": [
+        "minecraft:desert",
+        "#minecraft:is_mountain"
+      ],
+      "forceSpawnBiomes": [
+        "minecraft:beach",
+        "minecraft:mushroom_fields"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Arctic",
+        "Desert Nomad"
+      ]
     },
     {
       "id": "Arctic",
       "icon": "minecraft:packed_ice",
       "weight": 5,
+      "markup": 1.5,
       "trades": [
         "minecraft:snow_block,0.0625",
         "minecraft:ice,0.125",
@@ -205,15 +434,33 @@
         "minecraft:salmon,0.25",
         "minecraft:rabbit_hide,0.25"
       ],
-      "favorableBiomes": [ "#minecraft:is_taiga", "minecraft:grove", "minecraft:snowy_slopes" ],
-      "unfavorableBiomes": [ "minecraft:desert", "#minecraft:is_badlands", "#minecraft:is_jungle" ],
-      "forceSpawnBiomes": [ "minecraft:snowy_plains", "minecraft:ice_spikes", "minecraft:snowy_taiga", "minecraft:snowy_beach", "minecraft:frozen_ocean" ],
-      "mutuallyExclusiveCategories": [ "Islander", "Desert Nomad" ]
+      "favorableBiomes": [
+        "#minecraft:is_taiga",
+        "minecraft:grove",
+        "minecraft:snowy_slopes"
+      ],
+      "unfavorableBiomes": [
+        "minecraft:desert",
+        "#minecraft:is_badlands",
+        "#minecraft:is_jungle"
+      ],
+      "forceSpawnBiomes": [
+        "minecraft:snowy_plains",
+        "minecraft:ice_spikes",
+        "minecraft:snowy_taiga",
+        "minecraft:snowy_beach",
+        "minecraft:frozen_ocean"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Islander",
+        "Desert Nomad"
+      ]
     },
     {
       "id": "Desert Nomad",
       "icon": "minecraft:rabbit_hide",
       "weight": 5,
+      "markup": 1.5,
       "trades": [
         "minecraft:rabbit,0.5",
         "minecraft:rabbit_hide,0.25",
@@ -223,12 +470,24 @@
         "minecraft:sand,0.0625",
         "minecraft:red_sand,0.0625",
         "minecraft:sandstone,0.0625",
-        "hbs_boomseeds:boom_seeds,8"
+        "hbs_boomseed:boom_seeds,8"
       ],
-      "favorableBiomes": [ "minecraft:savanna", "minecraft:savanna_plateau" ],
-      "unfavorableBiomes": [ "#minecraft:is_ocean", "#minecraft:is_taiga" ],
-      "forceSpawnBiomes": [ "minecraft:desert", "#minecraft:is_badlands" ],
-      "mutuallyExclusiveCategories": [ "Islander", "Arctic" ]
+      "favorableBiomes": [
+        "minecraft:savanna",
+        "minecraft:savanna_plateau"
+      ],
+      "unfavorableBiomes": [
+        "#minecraft:is_ocean",
+        "#minecraft:is_taiga"
+      ],
+      "forceSpawnBiomes": [
+        "minecraft:desert",
+        "#minecraft:is_badlands"
+      ],
+      "mutuallyExclusiveCategories": [
+        "Islander",
+        "Arctic"
+      ]
     }
   ]
 }

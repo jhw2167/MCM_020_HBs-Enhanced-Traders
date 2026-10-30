@@ -6,26 +6,23 @@ import com.holybuckets.enhancedtrader.config.model.TradeCategory;
 import com.holybuckets.foundation.GeneralConfig;
 import com.holybuckets.foundation.HBUtil;
 import com.holybuckets.foundation.event.EventRegistrar;
+import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.event.EventPriority;
 import net.blay09.mods.balm.api.event.server.ServerStoppedEvent;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ModConfig {
 
@@ -40,9 +37,9 @@ public class ModConfig {
 
     private Registry<Structure> structureRegistry;
     private Item baseTradeItem;
+    private String baseTradeItemId;
 
     private static GeneralConfig CONFIG;
-    private static EnhancedTraderConfig ACTIVE_CONFIG;
 
     public static ModConfig getInstance() {
         if (INSTANCE == null) {
@@ -59,26 +56,65 @@ public class ModConfig {
         registrar.registerOnServerStopped(ModConfig::onServerStopped, EventPriority.Low);
     }
 
-    public EnhancedTraderJsonConfig getTraderConfig() {
-        return traderConfig;
+
+
+
+    //** DEFAULT CONFIGS
+
+    public int getMaxCategories() {
+        return activeConfig().maxTradeCategories;
+    }
+
+    public int getMarketRate() {
+        return activeConfig().marketRate;
+    }
+
+    public static EnhancedTraderConfig activeConfig() {
+        EnhancedTraderConfig config = Balm.getConfig().getActiveConfig(EnhancedTraderConfig.class);
+        return (config != null) ? config : new EnhancedTraderConfig();
     }
 
     public Item getBaseTradeItem() {
+        String id = activeConfig().baseTradeItem;
+        if (baseTradeItem == null || !Objects.equals(id, baseTradeItemId)) hydrateBaseTradeItem(id);
         return baseTradeItem;
     }
 
-    public float getMarkup(@Nullable TradeCategory category) {
-        Float markup = (category == null) ? null : category.getMarkup();
-        return (markup != null) ? markup : traderConfig.getMarkup();
+    private void hydrateBaseTradeItem(@Nullable String id) {
+        Item base = (id == null) ? null : HBUtil.ItemUtil.itemNameToItem(id);
+        this.baseTradeItem = (base == null || base == Items.AIR) ? Items.IRON_NUGGET : base;
+        this.baseTradeItemId = id;
     }
+
 
     public int getMaxStackSize() {
         return 64;
     }
 
+
+
+
+
+    //** HYDRATED CONFIGS
+
+    public float getMarkup(@Nullable TradeCategory category) {
+        Float markup = (category == null) ? null : category.getMarkup();
+        return (markup != null) ? markup : activeConfig().defaultMarkup;
+    }
+    public Float getDefaultMarkup() {
+        return activeConfig().defaultMarkup;
+    }
+
     public Collection<TradeCategory> getCategories() {
         return traderConfig.getCategories();
     }
+
+    public Collection<TradeCategory> getShuffledCategories(Random r) {
+        List<TradeCategory> categories = new ArrayList<>(traderConfig.getCategories());
+        Collections.shuffle(categories, r);
+        return categories;
+    }
+
 
     @Nullable
     public TradeCategory getCategory(String id) {
@@ -96,6 +132,9 @@ public class ModConfig {
     public boolean isSpawningStructure(@Nullable ResourceLocation structureLoc) {
         return structureLoc != null && spawningStructureLocs.contains(structureLoc);
     }
+
+    //** STRUCTURE CONFIGS
+
 
     public boolean isSpawningStructure(@Nullable Structure structure) {
         return structure != null && spawningStructures.contains(structure);
@@ -122,11 +161,13 @@ public class ModConfig {
     }
 
 
+
     // ** EVENTS
     public static void configureOnServerStart(EnhancedTraderConfig config)
     {
-        ACTIVE_CONFIG = config;
         CONFIG = GeneralConfig.getInstance();
+        INSTANCE.hydrateBaseTradeItem(config.baseTradeItem);
+
         INSTANCE.loadTraderConfig(config);
         INSTANCE.hydrateSpawningStructures(config);
         int configured = (config.spawningStructures == null) ? 0 : config.spawningStructures.size();
@@ -145,7 +186,7 @@ public class ModConfig {
         String json = HBUtil.FileIO.loadJsonConfigs(
             configFile,
             defaultConfigFile,
-            EnhancedTraderJsonConfig.buildDefaultConfig()
+            EnhancedTraderJsonConfig.defaultConfig()
         );
 
         try {
@@ -154,7 +195,7 @@ public class ModConfig {
             String msg = String.format("Failed to parse user trader config JSON: %s. Error:\n %s.\n\n Default configs will be applied",
                 configFile.getAbsolutePath(), e.getCause());
             LoggerProject.logError("002003", msg);
-            this.traderConfig = EnhancedTraderJsonConfig.buildDefaultConfig();
+            this.traderConfig = EnhancedTraderJsonConfig.defaultConfig();
         }
     }
 
@@ -172,7 +213,7 @@ public class ModConfig {
         {
             if (structId == null || structId.isBlank()) continue;
 
-            ResourceLocation loc = HBUtil.LevelUtil.toStructureLocation(structId);
+            ResourceLocation loc = HBUtil.LevelUtil.toStructureResourceLocation(structId);
             Structure structure = HBUtil.LevelUtil.getStructure(loc);
             if(structure == null) {
                 LoggerProject.logError("002011", "Failed to find structure for: " + structId);
@@ -198,6 +239,19 @@ public class ModConfig {
         structureToLocationMap.clear();
         INSTANCE = null;
     }
+
+    public int getMinCategories() {
+        return activeConfig().minTradeCategories;
+    }
+
+    public int getTradeStock() {
+        return activeConfig().tradeStockMean;
+    }
+
+    public int getTradeStockVariance() {
+        return activeConfig().tradeStockStdDev;
+    }
+
 
 
 }

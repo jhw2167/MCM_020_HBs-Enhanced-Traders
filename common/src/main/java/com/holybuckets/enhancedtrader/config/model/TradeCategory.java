@@ -13,7 +13,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
 
 import javax.annotation.Nullable;
+import javax.swing.*;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class TradeCategory {
 
@@ -23,13 +25,10 @@ public class TradeCategory {
     private final String id;
     private int weight = DEF_WEIGHT;
     private Float markup;
-    private Integer maxUses;
-    private int tradeCount = 0;
     private Item iconItem;
     private final List<TradeEntry> trades = new ArrayList<>();
     private Set<Biome> favorableBiomes = new HashSet<>();
     private Set<Biome> unfavorableBiomes = new HashSet<>();
-    private Set<Biome> forceSpawnBiomes = new HashSet<>();
 
     private final Set<String> mutuallyExclusiveCategories = new LinkedHashSet<>();
 
@@ -43,17 +42,16 @@ public class TradeCategory {
 
     public Float getMarkup() { return markup; }
 
-    public int getTradeCount() { return tradeCount; }
 
     public List<TradeEntry> getTrades() { return Collections.unmodifiableList(trades); }
 
     public Item getIconItem() { return iconItem; }
 
-    public boolean isFavorable(@Nullable Holder<Biome> biome) { return favorableBiomes.contains(biome); }
+    public Set<String> getMutuallyExclusiveCategories() { return mutuallyExclusiveCategories; }
 
-    public boolean isUnfavorable(@Nullable Holder<Biome> biome) { return unfavorableBiomes.contains(biome); }
+    public boolean isFavorable(@Nullable Biome biome) { return favorableBiomes.contains(biome); }
 
-    public boolean isForcedIn(@Nullable Holder<Biome> biome) { return forceSpawnBiomes.contains(biome); }
+    public boolean isUnfavorable(@Nullable Biome biome) { return unfavorableBiomes.contains(biome); }
 
     public boolean isExclusiveWith(String categoryId) {
         return mutuallyExclusiveCategories.contains(categoryId);
@@ -78,11 +76,9 @@ public class TradeCategory {
         this.markup = markup;
     }
 
-    public void setTradeCount(int tradeCount) { this.tradeCount = Math.max(0, tradeCount); }
-
-    private void setIcon(String icon) {
+    public void setIcon(String icon) {
         this.iconItem = HBUtil.ItemUtil.itemNameToItem(icon);
-        if(iconItem==null) iconItem=Items.EMERALD;
+        if(iconItem==null || iconItem==Items.AIR) iconItem=Items.EMERALD;
     }
 
     public void addTrade(TradeEntry entry) {
@@ -105,8 +101,6 @@ public class TradeCategory {
         if (icon != null) obj.addProperty("icon", icon);
         obj.addProperty("weight", weight);
         if (markup != null) obj.addProperty("markup", markup);
-        if (maxUses != null) obj.addProperty("maxUses", maxUses);
-        if (tradeCount > 0) obj.addProperty("tradeCount", tradeCount);
 
         JsonArray tradeArr = new JsonArray();
         trades.forEach(t -> tradeArr.add(t.serialize()));
@@ -114,7 +108,6 @@ public class TradeCategory {
 
         obj.add("favorableBiomes", toBiomeResourceLocation(favorableBiomes));
         obj.add("unfavorableBiomes", toBiomeResourceLocation(unfavorableBiomes));
-        if (!forceSpawnBiomes.isEmpty()) obj.add("forceSpawnBiomes", toBiomeResourceLocation(forceSpawnBiomes));
 
         JsonArray exclusive = new JsonArray();
         mutuallyExclusiveCategories.forEach(exclusive::add);
@@ -135,8 +128,9 @@ public class TradeCategory {
         try {
             if (obj.has("weight")) category.setWeight(obj.get("weight").getAsInt());
             if (obj.has("markup")) category.setMarkup(obj.get("markup").getAsFloat());
-            if (obj.has("tradeCount")) category.setTradeCount(obj.get("tradeCount").getAsInt());
+            else category.setMarkup(ModConfig.getInstance().getDefaultMarkup());
             if (obj.has("icon")) category.setIcon(obj.get("icon").getAsString());
+            else category.setIcon(null);
         } catch (Exception e) {
             LoggerProject.logError(CLASS_ID + "004", "Error parsing properties for category: " + id + ". " + e.getMessage());
         }
@@ -151,19 +145,16 @@ public class TradeCategory {
             }
         }
 
-        if(obj.has("favorableBiomes"))
-            category.favorableBiomes = toBiomes(obj.getAsJsonObject("favorableBiomes"));
-        if(obj.has("unfavorableBiomes"))
-            category.unfavorableBiomes = toBiomes(obj.getAsJsonObject("unfavorableBiomes"));
-        if(obj.has("forceSpawnBiomes"))
-            category.forceSpawnBiomes = toBiomes(obj.getAsJsonObject("forceSpawnBiomes"));
+        if(HBUtil.JCHECK(obj, "favorableBiomes", HBUtil.JTYPE.ARRAY))
+            category.favorableBiomes = toBiomes(obj.getAsJsonArray("favorableBiomes"));
+        if(HBUtil.JCHECK(obj, "unfavorableBiomes", HBUtil.JTYPE.ARRAY))
+            category.unfavorableBiomes = toBiomes(obj.getAsJsonArray("unfavorableBiomes"));
 
-        if (obj.has("mutuallyExclusiveCategories")) {
-            JsonElement element = obj.get("mutuallyExclusiveCategories");
-            if (element.isJsonArray()) {
-                for (JsonElement other : element.getAsJsonArray()) category.addExclusive(other.getAsString());
-            } else if (element.isJsonPrimitive()) {
-                category.addExclusive(element.getAsString());
+        if (HBUtil.JCHECK(obj, "mutuallyExclusiveCategories", HBUtil.JTYPE.ARRAY)) {
+            JsonArray array = obj.getAsJsonArray("mutuallyExclusiveCategories");
+            for (JsonElement element : array) {
+                if(HBUtil.JCHECK(element, HBUtil.JTYPE.STRING))
+                    category.addExclusive(element.getAsString());
             }
         }
 
@@ -180,13 +171,13 @@ public class TradeCategory {
         return array;
     }
 
-    private static Set<Biome> toBiomes(JsonObject biomes) {
+    private static final Predicate<JsonElement> checkString = s -> HBUtil.JCHECK(s, HBUtil.JTYPE.STRING);
+    private static Set<Biome> toBiomes(JsonArray biomes) {
         if(biomes==null || !biomes.isJsonArray() ) return Collections.emptySet();
         Set<Biome> biomeSet = new HashSet<>();
-        for(JsonElement element : biomes.getAsJsonArray()) {
-            var biome = HBUtil.LevelUtil.getBiome(element.getAsString());
-            if(biome!=null) biomeSet.add(biome);
-        }
+        Collection<String> biomeNames = biomes.asList().stream()
+            .filter(checkString).map(JsonElement::getAsString).toList();
+        biomeSet.addAll((HBUtil.LevelUtil.getBiomesFromNamesOrTag(biomeNames)));
         return biomeSet;
     }
 

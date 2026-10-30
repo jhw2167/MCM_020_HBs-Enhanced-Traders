@@ -35,6 +35,6 @@ public class EnhancedTraderMenuProvider implements BalmMenuProvider {
 
     @Override
     public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
-        EnhancedTraderMenu.writeOpeningData(buf, ModConfig.getInstance().getBaseTradeItem());
+        EnhancedTraderMenu.writeOpeningData(buf, trader, ModConfig.getInstance().getBaseTradeItem());
     }
 }

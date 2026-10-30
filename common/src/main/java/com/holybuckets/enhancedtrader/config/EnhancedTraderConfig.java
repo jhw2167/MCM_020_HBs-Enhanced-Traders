@@ -4,6 +4,7 @@ import com.holybuckets.enhancedtrader.Constants;
 import net.blay09.mods.balm.api.config.reflection.Comment;
 import net.blay09.mods.balm.api.config.reflection.Config;
 import net.blay09.mods.balm.api.config.reflection.NestedType;
+import net.blay09.mods.balm.api.config.reflection.Synced;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,17 +17,41 @@ public class EnhancedTraderConfig {
     public static final String DEF_BASE_TRADE_ITEM = "minecraft:iron_nugget";
     public static final int DEF_MARKET_RATE = 8;
 
-    @Comment("devMode==true logs trader spawns, category rolls and config hydration results")
-    public boolean devMode = false;
-
     @Comment("File path to the .json file where trade categories, their trades, weights, biomes and markup are configured")
     public String traderConfigFile = DEF_TRADER_CONFIG_PATH;
 
     @Comment("Item used as currency for every enhanced trader trade")
+    @Synced
     public String baseTradeItem = DEF_BASE_TRADE_ITEM;
 
     @Comment("Default market rate for items in the trade store. Items costing less than the market rate give you more items per purchase. A good number here is 8.")
+    @Synced
     public int marketRate = DEF_MARKET_RATE;
+
+    @Comment("Default markup price for trades. You may set a different markup per Trade Category using the JSON config. Default: 1.5")
+    @Synced
+    public float defaultMarkup = 1.5f;
+
+    @Comment("Maximum number of trade categories a trader can have. Each trade category has several trades according to the config. Default: 5")
+    @Synced
+    public int maxTradeCategories = 5;
+
+    @Comment("Minimum number of trade categories a trader can have. Each trade category has several trades according to the config. Default: 5")
+    @Synced
+    public int minTradeCategories = 2;
+
+    @Comment("Average amount of wares a trader has per trade. Default: 5")
+    @Synced
+    public int tradeStockMean = 5;
+
+    @Comment("Standard deviation of the amount of wares a trader has per trade. Default: 1")
+    @Synced
+    public int tradeStockStdDev = 2;
+
+    @Comment("A wandering trader tries to spawn at one of the below structures once per day with this chance. 0 to 1. Default: 0.35")
+    @Synced
+    public float spawnChance = 0.35f;
+
 
     @Comment("Structures that traders spawn around.")
     @NestedType(String.class)
@@ -43,40 +68,4 @@ public class EnhancedTraderConfig {
         "minecraft:ruined_portal"
     ));
 
-    public static class SpawnConfigs {
-
-        @Comment("Chance (0 to 1) a trader spawns when a player is near an eligible structure whose spawn cooldown has elapsed")
-        public float spawnChance = 0.35f;
-
-        @Comment("Ticks a structure waits after each spawn attempt before it may attempt again")
-        public int spawnCooldownTicks = 24000;
-
-        @Comment("Maximum number of enhanced traders maintained around a single structure")
-        public int maxTradersPerStructure = 1;
-
-        @Comment("Minimum horizontal distance in blocks from the structure origin a trader may spawn")
-        public int minSpawnDistance = 8;
-
-        @Comment("Maximum horizontal distance in blocks from the structure origin a trader may spawn")
-        public int maxSpawnDistance = 24;
-
-        @Comment("Traders that wander further than this many blocks from their structure are walked back toward it")
-        public int tetherRadius = 32;
-
-        @Comment("Ticks a trader remains in the world before despawning. Vanilla wandering traders use 48000")
-        public int traderLifetimeTicks = 48000;
-
-        @Comment("true sets the doTraderSpawning gamerule to false on server start so vanilla traders stop spawning at the player's base")
-        public boolean disableVanillaTraderSpawns = true;
-    }
-
-    public SpawnConfigs spawnConfigs = new SpawnConfigs();
-
-    public static class TradeConfigs {
-
-        @Comment("Maximum stack size accepted by the trader screen input slot")
-        public int tradeSlotCapacity = 999;
-    }
-
-    public TradeConfigs tradeConfigs = new TradeConfigs();
 }

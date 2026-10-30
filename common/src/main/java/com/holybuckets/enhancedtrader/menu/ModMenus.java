@@ -3,16 +3,16 @@ package com.holybuckets.enhancedtrader.menu;
 import com.holybuckets.enhancedtrader.Constants;
 import net.blay09.mods.balm.api.DeferredObject;
 import net.blay09.mods.balm.api.menu.BalmMenus;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ModMenus {
 
-    public static void initialize(BalmMenus menus) {
+    public static DeferredObject<MenuType<EnhancedTraderMenu>> enhancedTraderMenu;
 
+    public static void initialize(BalmMenus menus) {
+        enhancedTraderMenu = menus.registerMenu(id("enhanced_trader_menu"),
+            (syncId, inventory, buf) -> EnhancedTraderMenu.fromNetwork(syncId, inventory, buf));
     }
 
     private static ResourceLocation id(String name) {
@@ -20,5 +20,3 @@ public class ModMenus {
     }
 
 }
-
-

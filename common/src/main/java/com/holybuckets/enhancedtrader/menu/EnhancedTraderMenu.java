@@ -1,6 +1,8 @@
 package com.holybuckets.enhancedtrader.menu;
 
 import com.holybuckets.enhancedtrader.config.ModConfig;
+import com.holybuckets.enhancedtrader.core.TradeManager;
+import com.holybuckets.enhancedtrader.entity.EnhancedTraderData;
 import com.holybuckets.enhancedtrader.core.model.TraderOffer;
 import com.holybuckets.enhancedtrader.core.model.TraderTab;
 import com.holybuckets.enhancedtrader.networking.TraderOffersSync;
@@ -18,7 +20,6 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -33,14 +34,14 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
     public static final int TRADE_LIST_X = 5;
     public static final int TRADE_LIST_Y = 18;
     public static final int TRADE_LIST_WIDTH = 88;
-    public static final int TRADE_LIST_HEIGHT = 120;
+    public static final int TRADE_LIST_HEIGHT = 140;
     public static final int TRADE_ROW_HEIGHT = 20;
     public static final int VISIBLE_ROWS = TRADE_LIST_HEIGHT / TRADE_ROW_HEIGHT;
 
     public static final int SCROLLBAR_X = 94;
     public static final int SCROLLBAR_Y = 18;
     public static final int SCROLLBAR_WIDTH = 6;
-    public static final int SCROLLBAR_HEIGHT = 120;
+    public static final int SCROLLBAR_HEIGHT = 139;
 
     public static final int INPUT_A_X = 136;
     public static final int INPUT_A_Y = 37;
@@ -51,13 +52,14 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
     public static final int ARROW_X = 186;
     public static final int ARROW_Y = 38;
 
-    public static final int REVERSE_SIZE = 16;
-    public static final int REVERSE_X = TRADE_LIST_X + 1;
-    public static final int REVERSE_Y = TRADE_LIST_Y + TRADE_LIST_HEIGHT + 3;
+    public static final int REVERSE_WIDTH = 12;
+    public static final int REVERSE_HEIGHT = 17;
+    public static final int REVERSE_X = 108;
+    public static final int REVERSE_Y = 18;
 
-    public static final int TAB_WIDTH = 26;
+    public static final int TAB_WIDTH = 32;
     public static final int TAB_HEIGHT = 32;
-    public static final int TAB_SPACING = 27;
+    public static final int TAB_SPACING = 33;
     public static final int TAB_Y = -28;
     public static final int MAX_TABS = GUI_WIDTH / TAB_SPACING;
 
@@ -71,12 +73,12 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
     public static final int BUTTON_TAB_BASE = 200;
 
     public static final int MAX_OUTPUT_AMOUNT = 32767;
-    public static final int MAX_SYNC_COUNT = 127;
 
     public static final int INPUT_SLOT = 0;
-    public static final int STACK_SLOT = 1;
+    public static final int INPUT_SLOT2 = 1;
     public static final int OUTPUT_SLOT = 2;
     private static final int SLOT_COUNT = OUTPUT_SLOT + 1;
+    private static final int[] INPUT_SLOTS = { INPUT_SLOT, INPUT_SLOT2 };
 
     private final Container tradeContainer;
     private final List<TraderTab> tabs = new ArrayList<>();
@@ -90,15 +92,21 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
 
     private int activeTab = 0;
     private int selectedOffer = 0;
-    private boolean selling = false;
+    private boolean merchantSelling = true;
     private boolean updatingOutput = false;
 
     public EnhancedTraderMenu(int syncId, Inventory playerInventory, @Nullable WanderingTrader trader, Item baseTradeItem)
     {
-        super(TraderMenus.enhancedTraderMenu.get(), syncId);
+        this(syncId, playerInventory, trader, tabsFor(trader), baseTradeItem);
+    }
+
+    public EnhancedTraderMenu(int syncId, Inventory playerInventory, @Nullable WanderingTrader trader,
+                              List<TraderTab> tabs, Item baseTradeItem)
+    {
+        super(ModMenus.enhancedTraderMenu.get(), syncId);
         this.player = playerInventory.player;
         this.trader = trader;
-        this.baseTradeItem = (baseTradeItem == null) ? Items.IRON_NUGGET : baseTradeItem;
+        this.baseTradeItem = ModConfig.getInstance().getBaseTradeItem();
         if(tabs != null) this.tabs.addAll(tabs.subList(0, Math.min(tabs.size(), MAX_TABS)));
 
         this.tradeContainer = new SimpleContainer(SLOT_COUNT) {
@@ -116,7 +124,7 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         };
 
         this.addSlot(new InputSlot(tradeContainer, INPUT_SLOT, INPUT_A_X, INPUT_A_Y));
-        this.addSlot(new StackCounterSlot(tradeContainer, STACK_SLOT, INPUT_B_X, INPUT_B_Y));
+        this.addSlot(new InputSlot(tradeContainer, INPUT_SLOT2, INPUT_B_X, INPUT_B_Y));
         this.addSlot(new OutputSlot(tradeContainer, OUTPUT_SLOT, OUTPUT_X, OUTPUT_Y));
 
         for (int row = 0; row < 3; row++) {
@@ -140,7 +148,13 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         return new EnhancedTraderMenu(syncId, playerInventory, null, tabs, baseTradeItem);
     }
 
-    public static void writeOpeningData(FriendlyByteBuf buf, List<TraderTab> tabs, Item baseTradeItem) {
+    public static List<TraderTab> tabsFor(@Nullable WanderingTrader trader) {
+        if (trader == null) return Collections.emptyList();
+        return TradeManager.buildTabs(EnhancedTraderData.offersFor(trader));
+    }
+
+    public static void writeOpeningData(FriendlyByteBuf buf, WanderingTrader trader, Item baseTradeItem) {
+        List<TraderTab> tabs = tabsFor(trader);
         buf.writeItem(new ItemStack(baseTradeItem));
         int count = Math.min(tabs.size(), MAX_TABS);
         buf.writeVarInt(count);
@@ -172,7 +186,7 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         return offers.get(Math.max(0, Math.min(selectedOffer, offers.size() - 1)));
     }
 
-    public boolean isSelling() { return selling; }
+    public boolean isMerchantSelling() { return merchantSelling; }
 
     public Item getBaseTradeItem() { return baseTradeItem; }
 
@@ -197,8 +211,8 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         this.selectedOffer = index;
     }
 
-    public void setSelling(boolean selling) {
-        this.selling = selling;
+    public void setMerchantSelling(boolean merchantSelling) {
+        this.merchantSelling = merchantSelling;
     }
 
     public void applyUses(List<Integer> uses) {
@@ -207,7 +221,7 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         for (TraderTab tab : tabs) {
             for (TraderOffer offer : tab.getOffers()) {
                 if (i >= uses.size()) return;
-                offer.setUses(uses.get(i++));
+                offer.setWaresSold(uses.get(i++));
             }
         }
     }
@@ -237,12 +251,12 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
     {
         if (id == BUTTON_TOGGLE_DIRECTION) {
             cancelTrade(player);
-            this.selling = !this.selling;
+            this.merchantSelling = !this.merchantSelling;
             updateOutput();
             return true;
         }
         if (id == BUTTON_CLAIM_OUTPUT) {
-            claimOutput(player);
+            takeTrade(player);
             return true;
         }
         if (id == BUTTON_CANCEL_TRADE) {
@@ -268,29 +282,33 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
     @Nullable
     private Item expectedInputItem(@Nullable TraderOffer offer) {
         if (offer == null) return null;
-        return selling ? offer.getItem() : baseTradeItem;
+        return merchantSelling ? baseTradeItem : offer.getItem();
+    }
+
+    private int inputCostPerTrade(TraderOffer offer) {
+        return merchantSelling ? offer.getMarkupPrice() : offer.getQuantity();
+    }
+
+    private int payoutPerTrade(TraderOffer offer) {
+        return merchantSelling ? offer.getQuantity() : offer.getMarketPrice();
     }
 
     private Item payoutItem(TraderOffer offer) {
-        return selling ? baseTradeItem : offer.getItem();
+        return merchantSelling ? offer.getItem() : baseTradeItem;
     }
 
-    private int unitCost(TraderOffer offer) {
-        return selling ? offer.getQuantity() : offer.getBuyPrice();
-    }
-
-    private int unitPayout(TraderOffer offer) {
-        return selling ? offer.getSellPrice() : offer.getQuantity();
-    }
-
-    private int tradeCount(@Nullable TraderOffer offer) {
-        if (offer == null || offer.isOutOfStock()) return 0;
-        int cost = unitCost(offer);
-        int payout = unitPayout(offer);
+    private int availableTrades(@Nullable TraderOffer offer)
+    {
+        if (offer == null) return 0;
+        int cost = inputCostPerTrade(offer);
+        int payout = payoutPerTrade(offer);
         if (cost <= 0 || payout <= 0) return 0;
 
-        int trades = countInput(expectedInputItem(offer)) / cost;
-        trades = Math.min(trades, offer.getRemainingUses());
+        int trades = countInputs(expectedInputItem(offer)) / cost;
+        if (!merchantSelling) return Math.min(trades, 1);
+
+        if (offer.isOutOfStock()) return 0;
+        trades = Math.min(trades, offer.getRemainingWaresCount());
         return Math.min(trades, MAX_OUTPUT_AMOUNT / payout);
     }
 
@@ -308,31 +326,23 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
     private void computeOutput()
     {
         TraderOffer offer = getSelected();
-        if (offer == null) {
-            clearOutput();
-            return;
-        }
-
-        normalizeInput();
-        int trades = tradeCount(offer);
+        int trades = availableTrades(offer);
         if (trades <= 0) {
             clearOutput();
             return;
         }
-        setOutput(payoutItem(offer), trades * unitPayout(offer));
+        setOutput(payoutItem(offer), trades * payoutPerTrade(offer));
     }
 
     private void setOutput(@Nullable Item item, int amount)
     {
-        int clamped = Math.max(0, Math.min(amount, MAX_OUTPUT_AMOUNT));
-        ItemStack icon = (item == null || clamped <= 0) ? ItemStack.EMPTY : new ItemStack(item, 1);
-
-        outputAmount.set(clamped);
-        tradeContainer.setItem(OUTPUT_SLOT, icon);
+        ItemStack display = (item == null || amount <= 0) ? ItemStack.EMPTY : new ItemStack(item, amount);
+        outputAmount.set(display.isEmpty() ? 0 : amount);
+        tradeContainer.setItem(OUTPUT_SLOT, display);
 
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(
-                this.containerId, this.incrementStateId(), OUTPUT_SLOT, icon));
+                this.containerId, this.incrementStateId(), OUTPUT_SLOT, display.copy()));
         }
     }
 
@@ -340,155 +350,76 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         setOutput(null, 0);
     }
 
-    private void claimOutput(Player recipient)
+    private void takeTrade(Player recipient)
     {
         TraderOffer offer = getSelected();
         if (offer == null || trader == null) return;
 
-        normalizeInput();
-        int trades = tradeCount(offer);
+        int trades = availableTrades(offer);
         if (trades <= 0) return;
 
-        Item inputItem = expectedInputItem(offer);
-        int leftover = Math.max(0, countInput(inputItem) - trades * unitCost(offer));
+        if (merchantSelling) offer.waresBought(trades);
+        consumeInputs(trades * inputCostPerTrade(offer));
+        givePlayer(recipient, payoutItem(offer), trades * payoutPerTrade(offer));
 
-        offer.addUses(trades);
-        givePlayer(recipient, payoutItem(offer), trades * unitPayout(offer));
-        setInputRaw(inputItem, leftover);
         updateOutput();
-        syncOffers();
+        if (merchantSelling) syncOffers();
     }
 
     private void givePlayer(Player recipient, Item item, int amount)
     {
-        int unit = stackUnit(item);
-        int remaining = amount;
-        while (remaining > 0) {
-            int give = Math.min(unit, remaining);
-            recipient.getInventory().placeItemBackInInventory(new ItemStack(item, give));
-            remaining -= give;
-        }
+        if (item == null || amount <= 0) return;
+        recipient.getInventory().placeItemBackInInventory(new ItemStack(item, amount));
     }
 
-    private static int stackUnit(@Nullable Item item) {
-        if (item == null) return 64;
-        return Math.max(1, item.getMaxStackSize());
-    }
-
-    private int countInput(@Nullable Item item) {
-        if (item == null) return 0;
-        int total = 0;
-        ItemStack loose = tradeContainer.getItem(INPUT_SLOT);
-        if (loose.is(item)) total += loose.getCount();
-
-        ItemStack counted = tradeContainer.getItem(STACK_SLOT);
-        if (counted.is(item)) total += counted.getCount() * stackUnit(item);
-        return total;
-    }
-
-    private boolean acceptsInput(ItemStack stack) {
-        Item expected = expectedInputItem(getSelected());
-        return expected != null && !stack.isEmpty() && stack.is(expected) && !getSelected().isOutOfStock();
-    }
-
-    private void normalizeInput()
+    private int countInputs(@Nullable Item item)
     {
-        ItemStack loose = tradeContainer.getItem(INPUT_SLOT);
-        if (loose.isEmpty()) return;
+        if (item == null) return 0;
+        int count = 0;
+        for (int slot : INPUT_SLOTS) {
+            ItemStack stack = tradeContainer.getItem(slot);
+            if (stack.is(item)) count += stack.getCount();
+        }
+        return count;
+    }
 
-        int unit = stackUnit(loose.getItem());
-        if (loose.getCount() < unit) return;
-
-        ItemStack counted = tradeContainer.getItem(STACK_SLOT);
-        if (!counted.isEmpty() && !counted.is(loose.getItem())) return;
-
-        int held = counted.isEmpty() ? 0 : counted.getCount();
-        int drained = Math.min(loose.getCount() / unit, MAX_SYNC_COUNT - held);
-        if (drained <= 0) return;
-
-        int remainder = loose.getCount() - drained * unit;
-        Item item = loose.getItem();
-
-        boolean wasUpdating = updatingOutput;
+    private void consumeInputs(int amount)
+    {
         updatingOutput = true;
         try {
-            tradeContainer.setItem(STACK_SLOT, new ItemStack(item, held + drained));
-            tradeContainer.setItem(INPUT_SLOT, remainder > 0 ? new ItemStack(item, remainder) : ItemStack.EMPTY);
+            for (int slot : INPUT_SLOTS) {
+                if (amount <= 0) break;
+                ItemStack stack = tradeContainer.getItem(slot);
+                int take = Math.min(amount, stack.getCount());
+                stack.shrink(take);
+                amount -= take;
+                tradeContainer.setItem(slot, stack.isEmpty() ? ItemStack.EMPTY : stack);
+            }
         } finally {
-            updatingOutput = wasUpdating;
+            updatingOutput = false;
         }
     }
 
-    private boolean mergeIntoPartialInputSlot(ItemStack incoming)
+    private boolean acceptsInput(ItemStack stack)
     {
-        if (!acceptsInput(incoming)) return false;
-
-        ItemStack loose = tradeContainer.getItem(INPUT_SLOT);
-        int stackSize = stackUnit(incoming.getItem());
-
-        if (loose.isEmpty()) {
-            int move = Math.min(incoming.getCount(), stackSize);
-            tradeContainer.setItem(INPUT_SLOT, incoming.split(move));
-            return true;
-        }
-
-        int room = stackSize - loose.getCount();
-        if (room <= 0) return false;
-
-        int move = Math.min(room, incoming.getCount());
-        loose.grow(move);
-        incoming.shrink(move);
-        tradeContainer.setChanged();
-        return true;
+        TraderOffer offer = getSelected();
+        Item expected = expectedInputItem(offer);
+        if (expected == null || stack.isEmpty() || !stack.is(expected)) return false;
+        return !merchantSelling || !offer.isOutOfStock();
     }
 
     private void cancelTrade(Player p)
     {
         updatingOutput = true;
         try {
-            ItemStack loose = tradeContainer.getItem(INPUT_SLOT);
-            if (!loose.isEmpty()) givePlayer(p, loose.getItem(), loose.getCount());
-
-            ItemStack counted = tradeContainer.getItem(STACK_SLOT);
-            if (!counted.isEmpty())
-                givePlayer(p, counted.getItem(), counted.getCount() * stackUnit(counted.getItem()));
-
-            tradeContainer.setItem(INPUT_SLOT, ItemStack.EMPTY);
-            tradeContainer.setItem(STACK_SLOT, ItemStack.EMPTY);
-        } finally {
-            updatingOutput = false;
-        }
-        clearOutput();
-    }
-
-    private void setInputRaw(@Nullable Item item, int rawCount)
-    {
-        updatingOutput = true;
-        try {
-            if (item == null || rawCount <= 0) {
-                tradeContainer.setItem(INPUT_SLOT, ItemStack.EMPTY);
-                tradeContainer.setItem(STACK_SLOT, ItemStack.EMPTY);
-            } else {
-                int unit = stackUnit(item);
-                int stacks = Math.min(rawCount / unit, MAX_SYNC_COUNT);
-                int remainder = rawCount - stacks * unit;
-                tradeContainer.setItem(STACK_SLOT, stacks > 0 ? new ItemStack(item, stacks) : ItemStack.EMPTY);
-                tradeContainer.setItem(INPUT_SLOT, remainder > 0 ? new ItemStack(item, remainder) : ItemStack.EMPTY);
+            for (int slot : INPUT_SLOTS) {
+                ItemStack stack = tradeContainer.removeItemNoUpdate(slot);
+                if (!stack.isEmpty()) p.getInventory().placeItemBackInInventory(stack);
             }
         } finally {
             updatingOutput = false;
         }
         clearOutput();
-    }
-
-    private boolean moveEntireStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection)
-    {
-        boolean moved = false;
-        while (!stack.isEmpty()) {
-            if (!this.moveItemStackTo(stack, startIndex, endIndex, reverseDirection)) break;
-            moved = true;
-        }
-        return moved;
     }
 
     @Override
@@ -497,22 +428,19 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         Slot slot = this.slots.get(index);
         if (slot == null || !slot.hasItem()) return ItemStack.EMPTY;
 
+        if (index == OUTPUT_SLOT) {
+            takeTrade(player);
+            return ItemStack.EMPTY;
+        }
+
         ItemStack stack = slot.getItem();
         ItemStack result = stack.copy();
-        final int invStart = SLOT_COUNT;
-        final int invEnd = this.slots.size();
 
-        if (index == OUTPUT_SLOT) {
-            claimOutput(player);
-            return ItemStack.EMPTY;
-        } else if (index == STACK_SLOT) {
-            cancelTrade(player);
-            return ItemStack.EMPTY;
-        } else if (index < invStart) {
-            if (!moveEntireStackTo(stack, invStart, invEnd, true)) return ItemStack.EMPTY;
+        if (index < SLOT_COUNT) {
+            if (!this.moveItemStackTo(stack, SLOT_COUNT, this.slots.size(), true)) return ItemStack.EMPTY;
         } else {
-            if (!mergeIntoPartialInputSlot(stack)) return ItemStack.EMPTY;
-            normalizeInput();
+            if (!acceptsInput(stack)) return ItemStack.EMPTY;
+            if (!this.moveItemStackTo(stack, INPUT_SLOT, OUTPUT_SLOT, false)) return ItemStack.EMPTY;
         }
 
         if (stack.isEmpty()) slot.set(ItemStack.EMPTY);
@@ -530,19 +458,8 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
 
         updatingOutput = true;
         try {
-            ItemStack loose = tradeContainer.getItem(INPUT_SLOT);
-            if (!loose.isEmpty()) player.getInventory().placeItemBackInInventory(loose);
-
-            ItemStack counted = tradeContainer.getItem(STACK_SLOT);
-            if (!counted.isEmpty()) {
-                int unit = stackUnit(counted.getItem());
-                for (int i = 0; i < counted.getCount(); i++)
-                    player.getInventory().placeItemBackInInventory(new ItemStack(counted.getItem(), unit));
-            }
-
-            tradeContainer.setItem(INPUT_SLOT, ItemStack.EMPTY);
-            tradeContainer.setItem(STACK_SLOT, ItemStack.EMPTY);
             tradeContainer.setItem(OUTPUT_SLOT, ItemStack.EMPTY);
+            this.clearContainer(player, tradeContainer);
         } finally {
             updatingOutput = false;
         }
@@ -566,32 +483,6 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         }
     }
 
-    private class StackCounterSlot extends Slot {
-        StackCounterSlot(Container container, int index, int x, int y) {
-            super(container, index, x, y);
-        }
-
-        @Override
-        public boolean mayPlace(ItemStack stack) {
-            return false;
-        }
-
-        @Override
-        public boolean mayPickup(Player player) {
-            return false;
-        }
-
-        @Override
-        public int getMaxStackSize() {
-            return MAX_SYNC_COUNT;
-        }
-
-        @Override
-        public int getMaxStackSize(ItemStack stack) {
-            return MAX_SYNC_COUNT;
-        }
-    }
-
     private class OutputSlot extends Slot {
         OutputSlot(Container container, int index, int x, int y) {
             super(container, index, x, y);
@@ -605,11 +496,6 @@ public class EnhancedTraderMenu extends AbstractContainerMenu {
         @Override
         public boolean mayPickup(Player player) {
             return false;
-        }
-
-        @Override
-        public int getMaxStackSize() {
-            return ModConfig.getInstance().getMaxStackSize();
         }
     }
 }
